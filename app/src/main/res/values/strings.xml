@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Compara Preço</string>
+    <string name="titulo">Compara Preço</string>
+
+    <string name="preco">Preco da Unidade</string>
+    <string name="resultado">RESULTADO DO CÁLCULO</string>
+
+    <string name="btnLimpar">Limpar</string>
+    <string name="btnCalcular">Calcular</string>
+
+    <string name="label_opcoes_conversao">Opções de cálculo</string>
+    <string name="label_unidades">Preço/Unid</string>
+    <string name="label_peso">Preço/Quilo (kg)</string>
+    <string name="label_volume">Preço/Litro (l)</string>
+
+    <string name="hint_valor">R$ 0,00</string>
+    <string name="hint_Peso">Peso (kg)</string>
+    <string name="hint_Unid">Unidades</string>
+    <string name="hint_resultado_por_kg">Resultado (R$/kg)</string>
+    <string name="hint_resultado_por_unidade">Resultado (R$/Unid)</string>
+    <string name="hint_resultado_por_volume">Resultado (R$/litro)</string>
+    <string name="hint_Resultado">resultado</string>
+    <string name="hint_Volume">Litro (l)</string>
+
+
+    <string name="erro_campo_obrigatorio">Campo obrigatório</string>
+    <string name="erro_valor_invalido">Valor inválido</string>
+    <string name="erro_valor_deve_ser_maior_zero">Valor deve ser maior que zero</string>
+    <string name="erro_informe_preco_total">Informe o preço total.</string>
+    <string name="erro_preco_total_invalido">Preço total inválido.</string>
+    <string name="erro_informe_peso">Informe o peso.</string>
+    <string name="erro_peso_maior_zero">O peso deve ser maior que zero.</string>
+    <string name="erro_peso_invalido">Valor de peso inválido.</string>
+    <string name="erro_informe_unidades">Informe as unidades.</string>
+    <string name="erro_unidades_maior_zero">O número de unidades deve ser maior que zero.</string>
+    <string name="erro_unidades_invalidas">Valor de unidades inválido.</string>
+    <string name="erro_selecione_modo">Selecione um modo de comparação.</string>
+    <string name="ultimos_resultados">Últimos Resultados</string>
+    <string name="rodapeTexto">\@Moacir</string>
+
+</resources>
