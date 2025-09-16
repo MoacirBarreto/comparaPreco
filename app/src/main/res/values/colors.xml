@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="azul_principal">#1976D2</color>
+    <color name="verde_acao">#4CAF50</color>
+    <color name="fundo_app">#FAFAFA</color>
+    <color name="fundo_secundario">#F5F5F5</color>
+    <color name="texto_principal">#212121</color>
+    <color name="texto_secundario">#454545</color>
+    <color name="texto_hint">#757575</color>
+
+
+    <color name="cor_dica_resultado">#757575</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue">#3573EE</color>
 </resources>

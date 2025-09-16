@@ -21,7 +21,7 @@
     <string name="hint_resultado_por_volume">Resultado (R$/litro)</string>
     <string name="hint_Resultado">resultado</string>
     <string name="hint_Volume">Litro (l)</string>
-
+    <string name="hint_Preco">Preço</string>
 
     <string name="erro_campo_obrigatorio">Campo obrigatório</string>
     <string name="erro_valor_invalido">Valor inválido</string>

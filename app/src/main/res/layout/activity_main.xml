@@ -5,220 +5,263 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-
-<LinearLayout
-
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".View.MainActivity">
-
-    <TextView
-        android:id="@+id/labelTitulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/titulo"
-        android:textSize="34sp"
-        android:textStyle="bold" />
-
-
-    <TextView
-        android:id="@+id/labelPreco"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/preco" />
-
-    <EditText
-        android:id="@+id/editTxtPreco"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/hint_valor"
-        android:inputType="numberDecimal"
-        android:minHeight="48dp"
-        android:textAlignment="center"
-        android:textColorHint="#546E7A" />
-
-    <TextView
-        android:id="@+id/labelOpcoesConversao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="0dp"
-        android:text="@string/label_opcoes_conversao" />
-
-    <RadioGroup
-        android:id="@+id/radioGroupTipoConversao"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="0dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/radioBtnPeso"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:checked="true"
-            android:text="@string/label_peso"
-            android:textSize="10sp" />
-
-        <RadioButton
-            android:id="@+id/radioBtnVolume"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:checked="false"
-            android:text="@string/label_volume"
-            android:textSize="10sp" />
-
-        <RadioButton
-            android:id="@+id/radioBtnUnidades"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="@string/label_unidades"
-            android:textSize="10sp"
-            tools:ignore="RtlHardcoded"
-            android:checked="false"/>
-    </RadioGroup>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearPesoUnidad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="0dp"
-        android:autofillHints=""
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/editTxtPeso"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:autofillHints=""
-            android:ems="8"
-            android:hint="@string/hint_Peso"
-            android:inputType="numberDecimal"
-            android:minHeight="48dp"
-            android:textAlignment="center"
-            android:textColorHint="#546E7A" />
-
-        <EditText
-            android:id="@+id/editTxtUnid"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:autofillHints=""
-            android:ems="8"
-            android:hint="@string/hint_Unid"
-            android:inputType="numberDecimal"
-            android:minHeight="48dp"
-            android:textAlignment="center"
-            android:textColorHint="#546E7A" />
-
-        <EditText
-            android:id="@+id/editTxtVolume"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:autofillHints=""
-            android:ems="8"
-            android:hint="@string/hint_Volume"
-            android:inputType="numberDecimal"
-            android:minHeight="48dp"
-            android:textAlignment="center"
-            android:textColorHint="#546E7A" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <Button
-        android:id="@+id/btnCalcular"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/btnCalcular"
-        tools:ignore="VisualLintButtonSize" />
-
-    <TextView
-        android:id="@+id/labelResultado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/resultado" />
-
-    <EditText
-        android:id="@+id/editTxtResultado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:autofillHints=""
-        android:ems="10"
-        android:hint="@string/hint_Resultado"
-        android:inputType="numberDecimal"
-        android:textAlignment="center"
-        android:textColorHint="#78909C"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/btnLimpar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="@string/btnLimpar" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#414243"
-        android:text="@string/ultimos_resultados"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+    android:fillViewport="true"
+    android:scrollbarSize="0dp">
 
     <LinearLayout
-        android:id="@+id/layoutHistoricoResultados"
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F5F5F5"
+        android:background="@color/fundo_app"
         android:orientation="vertical"
-        android:padding="8dp">
-        <!-- As linhas do histórico serão adicionadas aqui programaticamente -->
+        android:scrollbarSize="16dp"
+        tools:context=".View.MainActivity">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLogomarca"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="32dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/azul_principal"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/labelTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="0dp"
+                android:text="@string/titulo"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:srcCompat="@android:drawable/checkbox_on_background" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/labelPreco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/preco"
+            android:textColor="@color/texto_secundario" />
+
+
+        <EditText
+            android:id="@+id/editTxtPreco"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/hint_valor"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            android:textColor="@color/texto_principal"
+            android:textColorHint="@color/texto_hint"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/labelOpcoesConversao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="0dp"
+            android:text="@string/label_opcoes_conversao"
+            android:textColor="@color/texto_secundario" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupTipoConversao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="0dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioBtnPeso"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:checked="true"
+                android:text="@string/label_peso"
+                android:textColor="@color/texto_principal"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/radioBtnVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:checked="false"
+                android:text="@string/label_volume"
+                android:textColor="@color/texto_principal"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/radioBtnUnidades"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:checked="false"
+                android:text="@string/label_unidades"
+                android:textColor="@color/texto_principal"
+                android:textSize="12sp"
+                tools:ignore="RtlHardcoded" />
+        </RadioGroup>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearPesoUnidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:autofillHints=""
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editTxtPeso"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:autofillHints=""
+                android:ems="8"
+                android:hint="@string/hint_Peso"
+                android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:textAlignment="center"
+                android:textColor="@color/texto_principal"
+                android:textColorHint="@color/texto_hint"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editTxtUnid"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:autofillHints=""
+                android:ems="8"
+                android:hint="@string/hint_Unid"
+                android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:textAlignment="center"
+                android:textColor="@color/texto_principal"
+                android:textColorHint="@color/texto_hint"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/editTxtVolume"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:autofillHints=""
+                android:ems="8"
+                android:hint="@string/hint_Volume"
+                android:inputType="numberDecimal"
+                android:minHeight="48dp"
+                android:textAlignment="center"
+                android:textColor="@color/texto_principal"
+                android:textColorHint="@color/texto_hint"
+                android:textSize="20sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <Button
+            android:id="@+id/btnCalcular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/verde_acao"
+            android:text="@string/btnCalcular"
+            android:textColor="@color/white"
+            tools:ignore="VisualLintButtonSize" />
+
+        <TextView
+            android:id="@+id/labelResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/resultado"
+            android:textColor="@color/texto_secundario" />
+
+        <EditText
+            android:id="@+id/editTxtResultado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/hint_Resultado"
+            android:inputType="numberDecimal"
+            android:textAlignment="center"
+            android:textColor="@color/verde_acao"
+            android:textColorHint="@color/cor_dica_resultado"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnLimpar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="@string/btnLimpar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#414243"
+            android:text="@string/ultimos_resultados"
+            android:textColor="@color/texto_principal"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/layoutHistoricoResultados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/fundo_secundario"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+
+            <!-- As linhas do histórico serão adicionadas aqui programaticamente -->
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtRodape"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@string/rodapeTexto"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="11sp" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/txtRodape"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/rodapeTexto"
-        android:textSize="11sp"
-        android:textColor="@android:color/darker_gray"
-        android:layout_marginTop="16dp" />
-</LinearLayout>
 </ScrollView>
