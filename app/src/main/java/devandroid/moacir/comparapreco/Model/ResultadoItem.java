@@ -1,37 +1,23 @@
-package devandroid.moacir.converteunidades.Model;
+package devandroid.moacir.comparapreco.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ResultadoItem implements Parcelable {
-    private final String descricao; // Ex: "15.76 por Kg"
-    private final double valorCalculado; // O valor numérico puro
-    private final String tipoConversao; // Ex: "Peso" ou "Unidade"
+    private String descricao;
+    private double valorUnitario;
+    private String label;
 
-    public ResultadoItem(String descricao, double valorCalculado, String tipoConversao) {
+    public ResultadoItem(String descricao, double valorUnitario, String label) {
         this.descricao = descricao;
-        this.valorCalculado = valorCalculado;
-        this.tipoConversao = tipoConversao;
+        this.valorUnitario = valorUnitario;
+        this.label = label;
     }
 
-    // Getters
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public double getValorCalculado() {
-        return valorCalculado;
-    }
-
-    public String getTipoConversao() {
-        return tipoConversao;
-    }
-
-    // Parcelable implementation (para salvar em onSaveInstanceState)
     protected ResultadoItem(Parcel in) {
         descricao = in.readString();
-        valorCalculado = in.readDouble();
-        tipoConversao = in.readString();
+        valorUnitario = in.readDouble();
+        label = in.readString();
     }
 
     public static final Creator<ResultadoItem> CREATOR = new Creator<ResultadoItem>() {
@@ -46,6 +32,19 @@ public class ResultadoItem implements Parcelable {
         }
     };
 
+    // This is the missing method that caused the error!
+    public double getValorUnitario() {
+        return valorUnitario;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -54,14 +53,7 @@ public class ResultadoItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(descricao);
-        dest.writeDouble(valorCalculado);
-        dest.writeString(tipoConversao);
-    }
-
-    // Opcional: sobrescrever toString() para facilitar o debug
-    @Override
-    public String toString() {
-        return descricao;
+        dest.writeDouble(valorUnitario);
+        dest.writeString(label);
     }
 }
-

@@ -13,4 +13,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#3573EE</color>
+
+    <color name="primary_blue">#1976D2</color>
+    <color name="accent_green">#388E3C</color> <!-- Para o resultado mais barato -->
+    <color name="history_bg">#F5F5F5</color>
+    <color name="divider_color">#E0E0E0</color>
+    <color name="text_secondary">#757575</color>
+
+
 </resources>

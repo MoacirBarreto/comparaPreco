@@ -1,4 +1,4 @@
-package devandroid.moacir.converteunidades.Model;
+package devandroid.moacir.comparapreco.Model;
 
 public class PrecoUnit {
     private double preco;
