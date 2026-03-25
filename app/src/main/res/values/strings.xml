@@ -39,8 +39,9 @@
     <string name="rodapeTexto">\@Moacir</string>
 
     <string name="instrucoes_titulo">Olá! 👋</string>
-    <string name="instrucoes_texto">Este app ajuda você a descobrir qual produto vale mais a pena.\n\n1. Escolha o modo (Peso, Unidade ou Litro).\n2. Digite o preço e a quantidade do primeiro item.\n3. Repita para o segundo item.\n\nO app vai marcar com uma estrela ★ a opção que pesa menos no seu bolso!</string>
+    <string name="instrucoes_texto">Este app ajuda você a descobrir qual produto vale mais a pena comprar.\n\n1. Entre com o preço.\n2. Escolha a opção de comparação (quilo, litro ou unidades)\n3. Digite a quantidade, de acordo com sua escolha. \n\nO Repita para a sua segunda opção de compra. O app vai marcar com uma estrela ★ a opção que pesa menos no seu bolso!</string>
     <string name="instrucoes_check">Não mostrar isso novamente</string>
     <string name="instrucoes_botao">Entendi!</string>
+    <string name="Rs_0">R$ 0,00</string>
 
 </resources>
