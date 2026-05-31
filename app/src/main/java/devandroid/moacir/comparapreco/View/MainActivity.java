@@ -1,24 +1,20 @@
 package devandroid.moacir.comparapreco.View;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -33,24 +29,21 @@ public class MainActivity extends AppCompatActivity {
 
     private RadioGroup radioGroupTipoConversao;
     private EditText editTxtPrecoTotal, editTxtPeso, editTxtUnid, editTxtVolume;
-    private Button btnCalcular;
+    private Button btnCalcular, btnLimpar;
     private TextView txtResultadoCalculado;
     private LinearLayout layoutHistoricoResultados;
 
     private ArrayList<ResultadoItem> listaHistoricoResultados;
 
     private static final int MAX_HISTORICO = 2;
-    private static final int MODO_NAO_SELECIONADO = -1;
     private static final int MODO_PESO = 1;
     private static final int MODO_UNIDADE = 2;
     private static final int MODO_VOLUME = 3;
 
-    private int modoAtual = MODO_NAO_SELECIONADO;
+    private int modoAtual = MODO_PESO; // Padrão inicial
 
     private static final String KEY_HISTORICO_RESULTADOS = "historicoResultados";
     private static final String KEY_MODO_ATUAL = "modoAtual";
-    private static final String PREFS_NAME = "ConfiguracoesApp";
-    private static final String PREF_MOSTRAR_INSTRUCOES = "mostrarInstrucoes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,55 +53,16 @@ public class MainActivity extends AppCompatActivity {
         inicializarComponentes();
 
         if (savedInstanceState != null) {
-            modoAtual = savedInstanceState.getInt(KEY_MODO_ATUAL, MODO_NAO_SELECIONADO);
+            modoAtual = savedInstanceState.getInt(KEY_MODO_ATUAL, MODO_PESO);
             listaHistoricoResultados = savedInstanceState.getParcelableArrayList(KEY_HISTORICO_RESULTADOS);
         } else {
             listaHistoricoResultados = new ArrayList<>();
         }
 
         configurarListeners();
-        configurarMascaraFinanceira();
-        atualizarUiComBaseNaSelecaoDoRadio();
+        configurarMascaras();
+        atualizarVisibilidadeCampos();
         atualizarTabelaHistorico();
-        verificarInstrucoes();
-    }
-
-    private void configurarMascaraFinanceira() {
-        editTxtPrecoTotal.addTextChangedListener(new MascaraFinanceira(editTxtPrecoTotal, true));
-        editTxtPeso.addTextChangedListener(new MascaraFinanceira(editTxtPeso, false));
-        editTxtUnid.addTextChangedListener(new MascaraFinanceira(editTxtUnid, false));
-        editTxtVolume.addTextChangedListener(new MascaraFinanceira(editTxtVolume, false));
-    }
-
-    private void verificarInstrucoes() {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        if (settings.getBoolean(PREF_MOSTRAR_INSTRUCOES, true)) {
-            exibirDialogoInstrucoes();
-        }
-    }
-
-    private void exibirDialogoInstrucoes() {
-        final CheckBox checkBox = new CheckBox(this);
-        checkBox.setText(R.string.instrucoes_check);
-        checkBox.setPadding(40, 20, 0, 20);
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(50, 20, 50, 0);
-        layout.addView(checkBox);
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.instrucoes_titulo)
-                .setMessage(R.string.instrucoes_texto)
-                .setView(layout)
-                .setCancelable(false)
-                .setPositiveButton(R.string.instrucoes_botao, (dialog, which) -> {
-                    if (checkBox.isChecked()) {
-                        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, 0).edit();
-                        editor.putBoolean(PREF_MOSTRAR_INSTRUCOES, false);
-                        editor.apply();
-                    }
-                }).show();
     }
 
     private void inicializarComponentes() {
@@ -118,69 +72,121 @@ public class MainActivity extends AppCompatActivity {
         editTxtUnid = findViewById(R.id.editTxtUnid);
         editTxtVolume = findViewById(R.id.editTxtVolume);
         btnCalcular = findViewById(R.id.btnCalcular);
+        btnLimpar = findViewById(R.id.btnLimpar);
         txtResultadoCalculado = findViewById(R.id.editTxtResultado);
         layoutHistoricoResultados = findViewById(R.id.layoutHistoricoResultados);
+    }
 
-        btnCalcular.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_blue));
-        btnCalcular.setTextColor(Color.WHITE);
+    private void configurarMascaras() {
+        // Tipos: 0 = Moeda, 1 = Peso/Volume (3 casas), 2 = Inteiro
+        editTxtPrecoTotal.addTextChangedListener(new MascaraFinanceira(editTxtPrecoTotal, 0));
+        editTxtPeso.addTextChangedListener(new MascaraFinanceira(editTxtPeso, 1));
+        editTxtVolume.addTextChangedListener(new MascaraFinanceira(editTxtVolume, 1));
+        editTxtUnid.addTextChangedListener(new MascaraFinanceira(editTxtUnid, 2));
     }
 
     private void configurarListeners() {
-        radioGroupTipoConversao.setOnCheckedChangeListener((group, checkedId) -> atualizarUiComBaseNaSelecaoDoRadio());
+        radioGroupTipoConversao.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioBtnPeso) {
+                modoAtual = MODO_PESO;
+            } else if (checkedId == R.id.radioBtnUnidades) {
+                modoAtual = MODO_UNIDADE;
+            } else if (checkedId == R.id.radioBtnVolume) {
+                modoAtual = MODO_VOLUME;
+            }
+            limparCamposEspecificos();
+            atualizarVisibilidadeCampos();
+        });
+
         btnCalcular.setOnClickListener(v -> calcularPrecoUnitario());
 
-        findViewById(R.id.btnLimpar).setOnClickListener(v -> {
-            limparCampos();
+        btnLimpar.setOnClickListener(v -> {
+            limparTodosOsCampos();
             listaHistoricoResultados.clear();
             atualizarTabelaHistorico();
+            bloquearTrocaDeModo(false); // Reabilita a troca de modo
         });
+    }
+
+    private void atualizarVisibilidadeCampos() {
+        editTxtPeso.setVisibility(View.GONE);
+        editTxtUnid.setVisibility(View.GONE);
+        editTxtVolume.setVisibility(View.GONE);
+
+        switch (modoAtual) {
+            case MODO_PESO:
+                editTxtPeso.setVisibility(View.VISIBLE);
+                txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_kg));
+                break;
+            case MODO_UNIDADE:
+                editTxtUnid.setVisibility(View.VISIBLE);
+                txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_unidade));
+                break;
+            case MODO_VOLUME:
+                editTxtVolume.setVisibility(View.VISIBLE);
+                txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_volume));
+                break;
+        }
+    }
+
+    private void bloquearTrocaDeModo(boolean bloquear) {
+        for (int i = 0; i < radioGroupTipoConversao.getChildCount(); i++) {
+            radioGroupTipoConversao.getChildAt(i).setEnabled(!bloquear);
+        }
+        radioGroupTipoConversao.setAlpha(bloquear ? 0.5f : 1.0f);
     }
 
     private void calcularPrecoUnitario() {
         esconderTeclado();
 
-        String strPrecoRaw = editTxtPrecoTotal.getText().toString().replaceAll("[^0-9]", "");
-        if (strPrecoRaw.isEmpty()) {
+        double precoTotal = extrairValorDouble(editTxtPrecoTotal);
+        EditText campoAtivo = obterCampoAtivo();
+
+        if (precoTotal <= 0) {
             editTxtPrecoTotal.setError("Informe o preço");
             return;
         }
-        double precoTotal = Double.parseDouble(strPrecoRaw) / 100.0;
 
-        EditText campoAtivo = null;
-        String label = "";
-        if (modoAtual == MODO_PESO) {
-            campoAtivo = editTxtPeso;
-            label = "Kg";
-        } else if (modoAtual == MODO_UNIDADE) {
-            campoAtivo = editTxtUnid;
-            label = "Unid.";
-        } else if (modoAtual == MODO_VOLUME) {
-            campoAtivo = editTxtVolume;
-            label = "Litro";
-        }
-
-        if (campoAtivo == null) {
-            Toast.makeText(this, "Selecione um modo", Toast.LENGTH_SHORT).show();
+        if (campoAtivo == null || extrairValorDouble(campoAtivo) <= 0) {
+            if (campoAtivo != null) campoAtivo.setError("Informe a quantidade");
             return;
         }
 
-        String strEntrada = campoAtivo.getText().toString().replaceAll("[^0-9]", "");
-        if (strEntrada.isEmpty()) {
-            campoAtivo.setError("Informe o valor");
-            return;
-        }
-
-        double valorEntrada = Double.parseDouble(strEntrada) / 100.0;
-        if (valorEntrada <= 0) {
-            campoAtivo.setError("Valor inválido");
-            return;
-        }
-
+        // 1. CAPTURAR dados antes de limpar
+        String precoEtiqueta = editTxtPrecoTotal.getText().toString();
+        String qtdEtiqueta = campoAtivo.getText().toString();
+        double valorEntrada = extrairValorDouble(campoAtivo);
         double resultadoNumerico = precoTotal / valorEntrada;
+
+        String label = obterLabelModo();
         String textoResultado = String.format(Locale.getDefault(), "R$ %.2f por %s", resultadoNumerico, label);
 
+        // 2. EXIBIR E SALVAR
         txtResultadoCalculado.setText(textoResultado);
-        adicionarResultadoAoHistorico(new ResultadoItem(textoResultado, resultadoNumerico, label));
+        adicionarResultadoAoHistorico(new ResultadoItem(
+                textoResultado, resultadoNumerico, label, precoEtiqueta, qtdEtiqueta));
+
+        // 3. TRAVAR MODO E LIMPAR
+        bloquearTrocaDeModo(true);
+        editTxtPrecoTotal.setText("");
+        campoAtivo.setText("");
+        editTxtPrecoTotal.requestFocus();
+
+        Toast.makeText(this, "Comparação adicionada!", Toast.LENGTH_SHORT).show();
+    }
+
+    private double extrairValorDouble(EditText campo) {
+        if (campo == null) return 0.0;
+        String limpo = campo.getText().toString().replaceAll("[^0-9]", "");
+        if (limpo.isEmpty()) return 0.0;
+
+        double valor = Double.parseDouble(limpo);
+        if (campo.getId() == R.id.editTxtPeso || campo.getId() == R.id.editTxtVolume) {
+            return valor / 1000.0; // 3 casas
+        } else if (campo.getId() == R.id.editTxtPreco) {
+            return valor / 100.0;  // 2 casas
+        }
+        return valor; // Inteiro (Unid)
     }
 
     private void adicionarResultadoAoHistorico(ResultadoItem item) {
@@ -193,90 +199,70 @@ public class MainActivity extends AppCompatActivity {
 
     private void atualizarTabelaHistorico() {
         layoutHistoricoResultados.removeAllViews();
+        if (listaHistoricoResultados.isEmpty()) return;
 
-        if (listaHistoricoResultados.isEmpty()) {
-            TextView tvVazio = new TextView(this);
-            tvVazio.setText("Inicie uma comparação");
-            tvVazio.setPadding(0, 30, 0, 30);
-            tvVazio.setGravity(Gravity.CENTER);
-            layoutHistoricoResultados.addView(tvVazio);
-            return;
-        }
-
-        // Identifica o menor valor para destacar (mesmo que não esteja no topo)
         double menorValor = Double.MAX_VALUE;
-        for (ResultadoItem item : listaHistoricoResultados) {
-            if (item.getValorUnitario() < menorValor) {
-                menorValor = item.getValorUnitario();
+        if (listaHistoricoResultados.size() == 2) {
+            for (ResultadoItem r : listaHistoricoResultados) {
+                if (r.getValorUnitario() < menorValor) menorValor = r.getValorUnitario();
             }
         }
 
-        // REMOVIDO: Collections.reverse(listaParaExibir)
-        // Agora usamos a listaHistoricoResultados diretamente para manter a ordem de entrada
         for (ResultadoItem item : listaHistoricoResultados) {
-            LinearLayout containerLinha = new LinearLayout(this);
-            containerLinha.setOrientation(LinearLayout.VERTICAL);
-            containerLinha.setPadding(40, 40, 40, 40);
+            LinearLayout itemLayout = new LinearLayout(this);
+            itemLayout.setOrientation(LinearLayout.VERTICAL);
+            itemLayout.setPadding(32, 24, 32, 24);
 
-            TextView tvDescricao = new TextView(this);
-            tvDescricao.setText(item.getDescricao());
-            tvDescricao.setTextSize(20);
+            TextView tvEtiqueta = new TextView(this);
+            tvEtiqueta.setText("Etiqueta: " + item.getPrecoOriginalFormatado() + " por " + item.getQuantidadeOriginal());
+            tvEtiqueta.setTextSize(14);
 
-            // Destaque visual para o mais barato (independente da posição)
+            TextView tvCalculo = new TextView(this);
+            tvCalculo.setText(item.getDescricao());
+            tvCalculo.setTextSize(18);
+            tvCalculo.setTypeface(null, Typeface.BOLD);
+
             if (listaHistoricoResultados.size() == 2 && item.getValorUnitario() == menorValor) {
-                containerLinha.setBackgroundColor(Color.parseColor("#E8F5E9")); // Fundo verde claro
-                tvDescricao.setTextColor(ContextCompat.getColor(this, R.color.accent_green));
-                tvDescricao.setTypeface(null, Typeface.BOLD);
-
-                TextView tvMelhorPreco = new TextView(this);
-                tvMelhorPreco.setText("★ MELHOR OPÇÃO");
-                tvMelhorPreco.setTextSize(12);
-                tvMelhorPreco.setTextColor(ContextCompat.getColor(this, R.color.accent_green));
-                containerLinha.addView(tvMelhorPreco);
-            } else {
-                tvDescricao.setTextColor(Color.BLACK);
+                itemLayout.setBackgroundResource(R.drawable.bg_melhor_opcao);
+                tvCalculo.setTextColor(ContextCompat.getColor(this, R.color.verde_acao));
+                TextView tvBadge = new TextView(this);
+                tvBadge.setText("★ MELHOR CUSTO-BENEFÍCIO");
+                tvBadge.setTextColor(ContextCompat.getColor(this, R.color.verde_acao));
+                tvBadge.setTextSize(12);
+                tvBadge.setTypeface(null, Typeface.BOLD);
+                itemLayout.addView(tvBadge);
             }
 
-            containerLinha.addView(tvDescricao, 0);
-            layoutHistoricoResultados.addView(containerLinha);
-
-            // Divisor entre os itens
-            View divisor = new View(this);
-            divisor.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 3));
-            divisor.setBackgroundColor(ContextCompat.getColor(this, R.color.divider_color));
-            layoutHistoricoResultados.addView(divisor);
+            itemLayout.addView(tvEtiqueta);
+            itemLayout.addView(tvCalculo);
+            layoutHistoricoResultados.addView(itemLayout);
         }
     }
 
-
-    private void atualizarUiComBaseNaSelecaoDoRadio() {
-        int selectedId = radioGroupTipoConversao.getCheckedRadioButtonId();
-        editTxtPeso.setVisibility(View.GONE);
-        editTxtUnid.setVisibility(View.GONE);
-        editTxtVolume.setVisibility(View.GONE);
-
-        if (selectedId == R.id.radioBtnPeso) {
-            modoAtual = MODO_PESO;
-            editTxtPeso.setVisibility(View.VISIBLE);
-            txtResultadoCalculado.setHint(R.string.hint_resultado_por_kg);
-        } else if (selectedId == R.id.radioBtnUnidades) {
-            modoAtual = MODO_UNIDADE;
-            editTxtUnid.setVisibility(View.VISIBLE);
-            txtResultadoCalculado.setHint(R.string.hint_resultado_por_unidade);
-        } else if (selectedId == R.id.radioBtnVolume) {
-            modoAtual = MODO_VOLUME;
-            editTxtVolume.setVisibility(View.VISIBLE);
-            txtResultadoCalculado.setHint(R.string.hint_resultado_por_volume);
-        }
+    private EditText obterCampoAtivo() {
+        if (modoAtual == MODO_PESO) return editTxtPeso;
+        if (modoAtual == MODO_UNIDADE) return editTxtUnid;
+        if (modoAtual == MODO_VOLUME) return editTxtVolume;
+        return null;
     }
 
-    private void limparCampos() {
+    private String obterLabelModo() {
+        if (modoAtual == MODO_PESO) return "Kg";
+        if (modoAtual == MODO_UNIDADE) return "Unid.";
+        if (modoAtual == MODO_VOLUME) return "Litro";
+        return "";
+    }
+
+    private void limparTodosOsCampos() {
         editTxtPrecoTotal.setText("");
+        limparCamposEspecificos();
+        txtResultadoCalculado.setText("");
+    }
+
+    private void limparCamposEspecificos() {
         editTxtPeso.setText("");
         editTxtUnid.setText("");
         editTxtVolume.setText("");
-        txtResultadoCalculado.setText("");
-        editTxtPrecoTotal.setError(null);
         editTxtPeso.setError(null);
         editTxtUnid.setError(null);
         editTxtVolume.setError(null);
@@ -290,59 +276,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private class MascaraFinanceira implements TextWatcher {
+        private final EditText campo;
+        private final int tipo;
+        private String atual = "";
+
+        public MascaraFinanceira(EditText campo, int tipo) {
+            this.campo = campo;
+            this.tipo = tipo;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.length() == 0 || s.toString().equals(atual)) return;
+            campo.removeTextChangedListener(this);
+
+            String limpo = s.toString().replaceAll("[^0-9]", "");
+            if (!limpo.isEmpty()) {
+                double val = Double.parseDouble(limpo);
+                Locale br = new Locale("pt", "BR");
+                if (tipo == 0) atual = NumberFormat.getCurrencyInstance(br).format(val / 100.0);
+                else if (tipo == 1) atual = String.format(br, "%,.3f", val / 1000.0);
+                else atual = String.format(br, "%,.0f", val);
+
+                campo.setText(atual);
+                campo.setSelection(atual.length());
+            } else {
+                atual = "";
+                campo.setText("");
+            }
+            campo.addTextChangedListener(this);
+        }
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void afterTextChanged(Editable s) {}
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_MODO_ATUAL, modoAtual);
         outState.putParcelableArrayList(KEY_HISTORICO_RESULTADOS, listaHistoricoResultados);
-    }
-
-    // CLASSE DE MASCARA ÚNICA (Corrigida e Finalizada)
-    private class MascaraFinanceira implements TextWatcher {
-        private final EditText campo;
-        private final boolean exibirMoeda;
-        private String atual = "";
-
-        public MascaraFinanceira(EditText campo, boolean exibirMoeda) {
-            this.campo = campo;
-            this.exibirMoeda = exibirMoeda;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (!s.toString().equals(atual)) {
-                campo.removeTextChangedListener(this);
-
-                String limpo = s.toString().replaceAll("[^0-9]", "");
-
-                if (!limpo.isEmpty()) {
-                    try {
-                        double valor = Double.parseDouble(limpo) / 100.0;
-                        Locale localeBR = new Locale("pt", "BR");
-                        if (exibirMoeda) {
-                            atual = NumberFormat.getCurrencyInstance(localeBR).format(valor);
-                        } else {
-                            atual = String.format(localeBR, "%,.2f", valor);
-                        }
-                        campo.setText(atual);
-                        campo.setSelection(atual.length());
-                    } catch (NumberFormatException e) {
-                        campo.setText("");
-                    }
-                } else {
-                    campo.setText("");
-                }
-
-                campo.addTextChangedListener(this);
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-        }
     }
 }
