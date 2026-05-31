@@ -71,7 +71,10 @@
             android:textAlignment="center"
             android:textColor="?attr/colorOnSurface"
             android:textSize="22sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:drawableEnd="@android:drawable/ic_menu_camera"
+            android:drawablePadding="8dp"
+            />
 
         <!-- Opções de Conversão -->
         <TextView
