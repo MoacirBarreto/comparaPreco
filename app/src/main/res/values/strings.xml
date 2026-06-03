@@ -36,12 +36,15 @@
     <string name="erro_unidades_invalidas">Valor de unidades inválido</string>
     <string name="erro_selecione_modo">Selecione um modo de comparação</string>
     <string name="ultimos_resultados">Últimos Resultados</string>
-    <string name="rodapeTexto">\@Moacir</string>
-
+    <string name="rodapeTexto">© Mb2-Dev 2026</string>
     <string name="instrucoes_titulo">Olá! 👋</string>
-    <string name="instrucoes_texto">Este app ajuda você a descobrir qual produto vale mais a pena comprar.\n\n1. Entre com o preço.\n2. Escolha a opção de comparação (quilo, litro ou unidades)\n3. Digite a quantidade, de acordo com sua escolha. \n\nO Repita para a sua segunda opção de compra. O app vai marcar com uma estrela ★ a opção que pesa menos no seu bolso!</string>
+    <string name="instrucoes_texto">A gente te ajuda a escolher o melhor custo-benefício! 💸🔥 \n
+\n1  Tira uma foto da etiqueta de preço do produto 📸 \n2  Dá uma conferida se tá tudo certo ✅
+\n3  Toca em Calcular 👆 \n4  Agora repete com a outra etiqueta 🔁 \n No final, o app marca com uma estrela ★ a opção que pesa menos no seu bolso!</string>
     <string name="instrucoes_check">Não mostrar isso novamente</string>
     <string name="instrucoes_botao">Entendi!</string>
     <string name="Rs_0">R$ 0,00</string>
+    <string name="compartilhar_dica">Compartilhar Dica</string>
+    <string name="n_o_mostrar_novamente">Não mostrar novamente</string>
 
 </resources>

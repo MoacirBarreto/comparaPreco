@@ -1,13 +1,15 @@
-package devandroid.moacir.comparapreco.View;
-
-import android.Manifest;
+package devandroid.moacir.comparapreco.View;import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,11 +17,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -46,12 +51,40 @@ public class MainActivity extends AppCompatActivity {
 
     private RadioGroup radioGroupTipoConversao;
     private EditText editTxtPrecoTotal, editTxtPeso, editTxtUnid, editTxtVolume;
-    private Button btnCalcular, btnLimpar;
+    private Button btnCalcular, btnLimpar, btnCompartilhar;
     private TextView txtResultadoCalculado;
     private LinearLayout layoutHistoricoResultados;
-
     private ArrayList<ResultadoItem> listaHistoricoResultados;
     private Uri fotoUri;
+
+    private void verificarPrimeiroAcesso() {
+        SharedPreferences prefs = getSharedPreferences("ConfigPrecos", MODE_PRIVATE);
+        boolean jaViuInstrucoes = prefs.getBoolean("jaViuInstrucoes", false);
+
+        if (!jaViuInstrucoes) {
+            exibirDialogoInstrucoes(prefs);
+        }
+    }
+    private void exibirDialogoInstrucoes(SharedPreferences prefs) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_instrucoes, null);
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.TemaDialogoArredondado).create();
+        dialog.setView(dialogView);
+        dialog.setCancelable(false); // Obriga o usuário a clicar no botão
+
+        CheckBox checkBox = dialogView.findViewById(R.id.checkNaoMostrarNovamente);
+        Button btnEntendi = dialogView.findViewById(R.id.btnEntendi);
+
+        btnEntendi.setOnClickListener(v -> {
+            if (checkBox.isChecked()) {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("jaViuInstrucoes", true);
+                editor.apply();
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
 
     private static final int MAX_HISTORICO = 2;
     private static final int MODO_PESO = 1;
@@ -63,14 +96,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_HISTORICO_RESULTADOS = "historicoResultados";
     private static final String KEY_MODO_ATUAL = "modoAtual";
 
-    // 1. Launcher para permissão
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) executarIntentCamera();
                 else Toast.makeText(this, "Permissão de câmera negada.", Toast.LENGTH_LONG).show();
             });
 
-    // 2. Launcher para Câmera em Alta Resolução
     private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.TakePicture(),
             success -> {
@@ -91,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         inicializarComponentes();
+        verificarPrimeiroAcesso();
 
         if (savedInstanceState != null) {
             modoAtual = savedInstanceState.getInt(KEY_MODO_ATUAL, MODO_PESO);
@@ -104,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         atualizarVisibilidadeCampos();
         atualizarTabelaHistorico();
 
-        // Clique no ícone da câmera no campo de preço
         editTxtPrecoTotal.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 int drawableRight = 2;
@@ -149,20 +180,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void processarTextoExtraido(String texto) {
         String textoLimpo = texto.toLowerCase().replace("\n", " ");
-
-        // Regex Preço
         Pattern precoPattern = Pattern.compile("(?:r\\$|\\$)?\\s?(\\d{1,3}[.,]\\d{2})");
         Matcher precoMatcher = precoPattern.matcher(textoLimpo);
         if (precoMatcher.find()) {
+            vibrar();
             String precoStr = precoMatcher.group(1).replaceAll("[^0-9]", "");
             editTxtPrecoTotal.setText(precoStr);
         }
 
-        // Regex Medidas (Peso, Volume, Unidade)
         Pattern medidaPattern = Pattern.compile("(\\d+[.,]?\\d*)\\s*(kg|g|l|ml|un|unid)");
         Matcher medidaMatcher = medidaPattern.matcher(textoLimpo);
 
         if (medidaMatcher.find()) {
+            vibrar();
             String valorStr = medidaMatcher.group(1).replace(",", ".");
             String unidade = medidaMatcher.group(2);
             double valor = Double.parseDouble(valorStr);
@@ -171,18 +201,29 @@ public class MainActivity extends AppCompatActivity {
                 modoAtual = unidade.contains("kg") ? MODO_PESO : MODO_VOLUME;
                 radioGroupTipoConversao.check(unidade.contains("kg") ? R.id.radioBtnPeso : R.id.radioBtnVolume);
                 EditText campo = unidade.contains("kg") ? editTxtPeso : editTxtVolume;
-                campo.setText(String.valueOf((int)(valor * 1000)));
+                campo.setText(String.valueOf((int) (valor * 1000)));
             } else if (unidade.equals("g") || unidade.equals("ml")) {
                 modoAtual = unidade.equals("g") ? MODO_PESO : MODO_VOLUME;
                 radioGroupTipoConversao.check(unidade.equals("g") ? R.id.radioBtnPeso : R.id.radioBtnVolume);
                 EditText campo = unidade.equals("g") ? editTxtPeso : editTxtVolume;
-                campo.setText(String.valueOf((int)valor));
+                campo.setText(String.valueOf((int) valor));
             } else if (unidade.startsWith("un")) {
                 modoAtual = MODO_UNIDADE;
                 radioGroupTipoConversao.check(R.id.radioBtnUnidades);
-                editTxtUnid.setText(String.valueOf((int)valor));
+                editTxtUnid.setText(String.valueOf((int) valor));
             }
             atualizarVisibilidadeCampos();
+        }
+    }
+
+    private void vibrar() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (v != null && v.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                v.vibrate(50);
+            }
         }
     }
 
@@ -194,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
         editTxtVolume = findViewById(R.id.editTxtVolume);
         btnCalcular = findViewById(R.id.btnCalcular);
         btnLimpar = findViewById(R.id.btnLimpar);
+        btnCompartilhar = findViewById(R.id.btnCompartilhar);
         txtResultadoCalculado = findViewById(R.id.editTxtResultado);
         layoutHistoricoResultados = findViewById(R.id.layoutHistoricoResultados);
     }
@@ -220,7 +262,10 @@ public class MainActivity extends AppCompatActivity {
             listaHistoricoResultados.clear();
             atualizarTabelaHistorico();
             bloquearTrocaDeModo(false);
+            btnCompartilhar.setVisibility(View.GONE);
         });
+
+        btnCompartilhar.setOnClickListener(v -> compartilharMelhorOpcao());
     }
 
     private void atualizarVisibilidadeCampos() {
@@ -228,16 +273,25 @@ public class MainActivity extends AppCompatActivity {
         editTxtUnid.setVisibility(View.GONE);
         editTxtVolume.setVisibility(View.GONE);
 
+        EditText campoAtivo;
         if (modoAtual == MODO_PESO) {
-            editTxtPeso.setVisibility(View.VISIBLE);
+            campoAtivo = editTxtPeso;
             txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_kg));
         } else if (modoAtual == MODO_UNIDADE) {
-            editTxtUnid.setVisibility(View.VISIBLE);
+            campoAtivo = editTxtUnid;
             txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_unidade));
         } else {
-            editTxtVolume.setVisibility(View.VISIBLE);
+            campoAtivo = editTxtVolume;
             txtResultadoCalculado.setHint(getString(R.string.hint_resultado_por_volume));
         }
+
+        campoAtivo.setVisibility(View.VISIBLE);
+
+        // COMENTE OU REMOVA a linha abaixo para o teclado não abrir no início
+        // campoAtivo.requestFocus();
+
+        campoAtivo.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.verde_acao));
+        editTxtPrecoTotal.setBackgroundTintList(null);
     }
 
     private void bloquearTrocaDeModo(boolean bloquear) {
@@ -292,13 +346,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void atualizarTabelaHistorico() {
         layoutHistoricoResultados.removeAllViews();
-        if (listaHistoricoResultados.isEmpty()) return;
+        if (listaHistoricoResultados.isEmpty()) {
+            btnCompartilhar.setVisibility(View.GONE);
+            return;
+        }
 
         double menorValor = Double.MAX_VALUE;
         if (listaHistoricoResultados.size() == 2) {
             for (ResultadoItem r : listaHistoricoResultados) {
                 if (r.getValorUnitario() < menorValor) menorValor = r.getValorUnitario();
             }
+            btnCompartilhar.setVisibility(View.VISIBLE);
+        } else {
+            btnCompartilhar.setVisibility(View.GONE);
         }
 
         for (ResultadoItem item : listaHistoricoResultados) {
@@ -324,6 +384,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void compartilharMelhorOpcao() {
+        if (listaHistoricoResultados.size() < 2) return;
+        ResultadoItem item1 = listaHistoricoResultados.get(0);
+        ResultadoItem item2 = listaHistoricoResultados.get(1);
+        ResultadoItem melhor = (item1.getValorUnitario() < item2.getValorUnitario()) ? item1 : item2;
+        ResultadoItem caro = (melhor == item1) ? item2 : item1;
+        double economia = ((caro.getValorUnitario() - melhor.getValorUnitario()) / caro.getValorUnitario()) * 100;
+
+        StringBuilder mensagem = new StringBuilder();
+        mensagem.append("🛒 *Dica de Compra - Compara Preço*\n\n");
+        mensagem.append("✅ *MELHOR:* ").append(melhor.getPrecoOriginalFormatado()).append(" (").append(melhor.getQuantidadeOriginal()).append(")\n");
+        mensagem.append("👉 Sai por: *").append(melhor.getDescricao()).append("*\n\n");
+        mensagem.append("❌ *OUTRO:* ").append(caro.getPrecoOriginalFormatado()).append(" (").append(caro.getQuantidadeOriginal()).append(")\n");
+        mensagem.append("👉 Sai por: ").append(caro.getDescricao()).append("\n\n");
+        mensagem.append(String.format(Locale.getDefault(), "💰 Economia de *%.1f%%*", economia));
+        mensagem.append("\n\n_Enviado por App Compara Preço_");
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, mensagem.toString());
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "Enviar comparação via:"));
+    }
+
     private EditText obterCampoAtivo() {
         if (modoAtual == MODO_PESO) return editTxtPeso;
         if (modoAtual == MODO_UNIDADE) return editTxtUnid;
@@ -340,6 +424,7 @@ public class MainActivity extends AppCompatActivity {
         editTxtPrecoTotal.setText("");
         limparCamposEspecificos();
         txtResultadoCalculado.setText("");
+        editTxtPrecoTotal.requestFocus();
     }
 
     private void limparCamposEspecificos() {
@@ -375,9 +460,7 @@ public class MainActivity extends AppCompatActivity {
                 else atual = String.format(br, "%,.0f", val);
                 campo.setText(atual);
                 campo.setSelection(atual.length());
-            } else {
-                atual = ""; campo.setText("");
-            }
+            } else { atual = ""; campo.setText(""); }
             campo.addTextChangedListener(this);
         }
         @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
