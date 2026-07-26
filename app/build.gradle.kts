@@ -7,7 +7,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "devandroid.moacir.comparapreco"
+        applicationId = "devandroid.com.moacir.comparapreco"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

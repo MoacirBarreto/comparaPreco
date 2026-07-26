@@ -28,7 +28,7 @@
         </provider>
         <activity
             android:exported="true"
-            android:name="devandroid.moacir.comparapreco.View.MainActivity">
+            android:name="com.moacir.comparapreco.View.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
