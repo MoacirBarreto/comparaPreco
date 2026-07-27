@@ -50,9 +50,24 @@
                     android:layout_marginStart="5dp"
                     app:srcCompat="@drawable/ic_app"
                     app:tint="@color/white" />
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Indicador de Passo -->
+        <TextView
+            android:id="@+id/txtIndicadorPasso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_badge_passo"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"
+            android:text="@string/label_produto_1"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <!-- Preço Principal -->
         <TextView
@@ -83,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:text="@string/label_opcoes_conversao"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -115,6 +130,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_unidades" />
         </RadioGroup>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchMetricaReduzida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_metrica_reduzida"
+            android:visibility="visible" />
 
         <!-- CORREÇÃO: Inputs Lado a Lado usando Layout Weight (Responsivo) -->
         <LinearLayout

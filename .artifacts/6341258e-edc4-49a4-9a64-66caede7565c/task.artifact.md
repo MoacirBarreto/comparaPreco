@@ -1,0 +1,5 @@
+- [x] Criar `bg_badge_passo.xml` no diretório `drawable`
+- [x] Estilizar `txtIndicadorPasso` no `activity_main.xml`
+- [x] Implementar animação de transição na `MainActivity.java`
+- [x] Ajustar cores dinâmicas (Azul -> Verde) na conclusão
+- [x] Verificar build e funcionamento visual

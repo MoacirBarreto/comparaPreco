@@ -1,19 +1,14 @@
 <resources>
     <string name="app_name">Compara Preço</string>
     <string name="titulo">Compara Preço</string>
-
     <string name="preco">Preco da Unidade</string>
     <string name="resultado">RESULTADO DO CÁLCULO</string>
-
     <string name="btnLimpar">Limpar</string>
     <string name="btnCalcular">Calcular</string>
-
     <string name="label_opcoes_conversao">Opções de Cálculo</string>
     <string name="label_unidades">unidade</string>
     <string name="label_peso">quilo (kg)</string>
     <string name="label_volume">litro (l)</string>
-
-    <string name="hint_valor">R$ 0,00</string>
     <string name="hint_Peso">Peso (kg)</string>
     <string name="hint_Unid">Unidades</string>
     <string name="hint_resultado_por_kg">Resultado (R$/kg)</string>
@@ -22,7 +17,6 @@
     <string name="hint_Resultado">Resultado</string>
     <string name="hint_Volume">litro (l)</string>
     <string name="hint_Preco">Preço</string>
-
     <string name="erro_campo_obrigatorio">Campo obrigatório</string>
     <string name="erro_valor_invalido">Valor inválido</string>
     <string name="erro_valor_deve_ser_maior_zero">Valor deve ser maior que zero</string>
@@ -38,7 +32,7 @@
     <string name="ultimos_resultados">Últimos Resultados</string>
     <string name="rodapeTexto">© Mb2-Dev 2026</string>
     <string name="instrucoes_titulo">Olá! 👋</string>
-    <string name="instrucoes_texto">A gente te ajuda a escolher o melhor custo-benefício! 💸🔥 \n
+    <string name="instrucoes_texto">Vamos te ajuda a escolher o melhor custo-benefício! 💸🔥 \n
 \n1  Tira uma foto da etiqueta de preço do produto 📸 \n2  Dá uma conferida se tá tudo certo ✅
 \n3  Toca em Calcular 👆 \n4  Agora repete com a outra etiqueta 🔁 \n No final, o app marca com uma estrela ★ a opção que pesa menos no seu bolso!</string>
     <string name="instrucoes_check">Não mostrar isso novamente</string>
@@ -46,5 +40,18 @@
     <string name="Rs_0">R$ 0,00</string>
     <string name="compartilhar_dica">Compartilhar Dica</string>
     <string name="n_o_mostrar_novamente">Não mostrar novamente</string>
+    <string name="label_metrica_reduzida">Ver preço por 100g / 100ml</string>
+    <string name="unidade_100g">100g</string>
+    <string name="unidade_100ml">100ml</string>
+
+    <!-- Strings para Confirmação de OCR -->
+    <string name="ocr_dialogo_titulo">Valores Detectados</string>
+    <string name="ocr_dialogo_mensagem">Deseja preencher os campos com estes valores?\n\n💰 Preço: %1$s\n📏 Medida: %2$s %3$s</string>
+    <string name="ocr_confirmar">Sim, preencher</string>
+    <string name="ocr_ignorar">Não, descartar</string>
+
+    <string name="label_produto_1">Produto 1</string>
+    <string name="label_produto_2">Produto 2</string>
+    <string name="label_comparacao_pronta">Comparação Pronta!</string>
 
 </resources>

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "devandroid.moacir.comparapreco"
+    namespace = "com.moacir.comparapreco"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "devandroid.com.moacir.comparapreco"
+        applicationId = "com.moacir.comparapreco"
         minSdk = 29
         targetSdk = 36
         versionCode = 1

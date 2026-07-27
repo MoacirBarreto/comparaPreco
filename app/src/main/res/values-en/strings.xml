@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Compara Preço</string>
+    <string name="label_metrica_reduzida">Price per 100g / 100ml</string>
+    <string name="unidade_100g">100g</string>
+    <string name="unidade_100ml">100ml</string>
+    <string name="ocr_dialogo_titulo">Values Detected</string>
+    <string name="ocr_dialogo_mensagem">Fill fields with these values?\n\n💰 Price: %1$s\n📏 Measure: %2$s %3$s</string>
+    <string name="ocr_confirmar">Yes, fill</string>
+    <string name="ocr_ignorar">No, discard</string>
+    <string name="label_produto_1">Product 1</string>
+    <string name="label_produto_2">Product 2</string>
+    <string name="label_comparacao_pronta">Comparison Ready!</string>
+</resources>
