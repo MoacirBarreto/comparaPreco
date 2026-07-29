@@ -1,32 +1,26 @@
-# Walkthrough - Destaque Visual do Indicador de Comparação
+# Walkthrough - Correção da Persistência de Estado (Rotação)
 
-O rótulo de passo (Produto 1, Produto 2, etc.) foi transformado em um elemento visual central de destaque, com um design moderno e animações dinâmicas.
+Corrigimos o problema onde os dados do aplicativo (modo selecionado, estado do switch e histórico) eram perdidos ao rotacionar o dispositivo. Agora a interface se sincroniza automaticamente com o estado preservado na `ViewModel`.
 
 ## O que mudou?
 
-### 1. Novo Visual "Badge/Cápsula"
-O texto do indicador agora aparece dentro de uma cápsula estilizada com:
-- Fundo azul sólido (`azul_principal`).
-- Letras brancas em caixa alta (`textAllCaps`) para máximo contraste.
-- Cantos arredondados e elevação suave, dando um aspecto de botão/etiqueta profissional.
+### 1. Sincronização Reativa Bidirecional
+Anteriormente, a `MainActivity` apenas enviava dados para a `ViewModel`, mas não "ouvia" de volta o estado inicial ao ser recriada. Implementamos:
+- **Observadores Ativos:** Ao girar a tela, a `MainActivity` observa o `modoAtual` e o `isMetricaReduzida` da `ViewModel` e atualiza o `RadioGroup` e o `Switch` automaticamente.
+- **Proteção contra Loops:** Adicionamos checagens (`if (switch.isChecked() != valor)`) para evitar que a atualização vinda da ViewModel dispare um evento de mudança de volta, o que poderia limpar o histórico desnecessariamente.
 
-### 2. Animação de Transição
-Sempre que o aplicativo avança de um produto para outro (ex: de Produto 1 para Produto 2), o rótulo executa uma **animação de escala (pulo)**.
-- Isso chama a atenção do usuário de forma amigável para a mudança de estado do app.
+### 2. Persistência de Histórico Garantida
+Como o histórico de resultados já estava na `ViewModel`, ao adicionar a sincronização dos modos, o Android agora consegue reconstruir a lista de resultados exatamente como estava antes do giro da tela.
 
-### 3. Cores Dinâmicas de Progresso
-O rótulo agora sinaliza visualmente a conclusão da comparação:
-- **Azul:** Durante a inserção (Produto 1 e Produto 2).
-- **Verde:** Quando a comparação está pronta, reforçando o sucesso do processo.
+### 3. Melhoria na Robustez
+- O indicador de passo ("Produto 1", "Produto 2") agora também persiste corretamente.
+- As dicas (hints) dos campos são atualizadas imediatamente após a rotação baseando-se no estado restaurado.
 
 ---
 
-### Detalhes Técnicos
-- [x] Criado `bg_badge_passo.xml` com cantos arredondados.
-- [x] Implementada `ScaleAnimation` via código na `MainActivity.java`.
-- [x] Uso de `backgroundTintList` para alternar cores sem perder o shape do fundo.
-- [x] Ajuste de padding e tamanhos para melhor legibilidade em diferentes dispositivos.
+### Verificação Técnica
+- [x] Atualizada lógica de `configurarObservadores` para sincronizar componentes de seleção.
+- [x] Refatorados listeners de UI para garantir compatibilidade com atualizações programáticas.
+- [x] Build do projeto concluído com sucesso.
 
-render_diffs(file:///C:/Users/moaci/StudioProjects/ComparaPreco/app/src/main/res/drawable/bg_badge_passo.xml)
-render_diffs(file:///C:/Users/moaci/StudioProjects/ComparaPreco/app/src/main/res/layout/activity_main.xml)
 render_diffs(file:///C:/Users/moaci/StudioProjects/ComparaPreco/app/src/main/java/com/moacir/comparapreco/View/MainActivity.java)
